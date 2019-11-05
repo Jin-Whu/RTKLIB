@@ -79,10 +79,9 @@ include_directories(${SRC_DIR})
 
 if(BUILD_SHARED_LIBS)
 add_library(${PROJECT_NAME} SHARED ${C_SOURCES} ${C_HEADERS})
-else()
-add_library(${PROJECT_NAME} STATIC ${C_SOURCES} ${C_HEADERS})
-endif()
-
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} winmm ws2_32)
+endif()
+else()
+add_library(${PROJECT_NAME} STATIC ${C_SOURCES} ${C_HEADERS})
 endif()
