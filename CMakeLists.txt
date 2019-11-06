@@ -85,3 +85,7 @@ endif()
 else()
 add_library(${PROJECT_NAME} STATIC ${C_SOURCES} ${C_HEADERS})
 endif()
+
+# install
+install(TARGETS rtk DESTINATION lib)
+install(FILES ${SRC_DIR}/rtklib.h DESTINATION include)
