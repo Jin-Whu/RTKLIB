@@ -25,7 +25,7 @@ option(RTKLIB_ENABLE_BDS "Define if rtklib should build with support for BDS" ON
 option(RTKLIB_ENABLE_QZS "Define if rtklib should build with support for QZSS" OFF)
 option(RTKLIB_ENABLE_IRN "Define if rtklib should build with support for IRNSS" OFF)
 option(RTKLIB_ENABLE_LEO "Define if rtklib should build with support for LEO" OFF)
-option(RTKLIB_ENABLE_LEX "Define if rtklib should build with support QZSS LEX extension" ON)
+option(RTKLIB_ENABLE_LEX "Define if rtklib should build with support QZSS LEX extension" OFF)
 
 if(RTKLIB_ENABLE_GLO)
 add_definitions(-DENAGLO)
