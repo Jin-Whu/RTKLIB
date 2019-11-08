@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.13)
 project(rtk)
 
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Limited configurations" FORCE)
@@ -27,65 +27,104 @@ option(RTKLIB_ENABLE_IRN "Define if rtklib should build with support for IRNSS" 
 option(RTKLIB_ENABLE_LEO "Define if rtklib should build with support for LEO" OFF)
 option(RTKLIB_ENABLE_LEX "Define if rtklib should build with support QZSS LEX extension" OFF)
 
-if(RTKLIB_ENABLE_GLO)
-add_definitions(-DENAGLO)
-endif()
-
-if(RTKLIB_ENABLE_GAL)
-add_definitions(-DENAGAL)
-endif()
-
-if(RTKLIB_ENABLE_BDS)
-add_definitions(-DENACMP)
-endif()
-
-if(RTKLIB_ENABLE_QZS)
-add_definitions(-DENAQZS)
-endif()
-
-if(RTKLIB_ENABLE_IRN)
-add_definitions(-DENAIRN)
-endif()
-
 # GNSS observation set
 set(RTKLIB_NFREQ 3 CACHE STRING "Set number of obs codes/frequencise (default 3)")
 set(RTKLIB_NEXOBS 0 CACHE STRING "Set number of extended obs codes (default 0)")
 set(RTKLIB_MAXOBS 64 CACHE STRING "Set max number of obs data in an epoch (default 64)")
-
-if(RTKLIB_NFREQ)
-add_definitions(-DNFREQ=${RTKLIB_NFREQ})
-endif()
-
-if(RTKLIB_NEXOBS)
-add_definitions(-DNEXOBS=${RTKLIB_NEXOBS})
-endif()
-
-if(RTKLIB_MAXOBS)
-add_definitions(-DMAXOBS=${RTKLIB_MAXOBS})
-endif()
 
 # output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-# source files
-set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
-file(GLOB_RECURSE C_SOURCES ${SRC_DIR}/*.c)
-file(GLOB C_HEADERS ${SRC_DIR}/*.h)
-
-# include directories
-include_directories(${SRC_DIR})
-
 if(BUILD_SHARED_LIBS)
-add_library(${PROJECT_NAME} SHARED ${C_SOURCES} ${C_HEADERS})
-if(WIN32)
-target_link_libraries(${PROJECT_NAME} winmm ws2_32)
-endif()
+add_library(${PROJECT_NAME} SHARED "")
 else()
-add_library(${PROJECT_NAME} STATIC ${C_SOURCES} ${C_HEADERS})
+add_library(${PROJECT_NAME} STATIC "")
 endif()
+
+# source files
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/src/convgpx.c
+        ${PROJECT_SOURCE_DIR}/src/convkml.c
+        ${PROJECT_SOURCE_DIR}/src/convrnx.c
+        ${PROJECT_SOURCE_DIR}/src/datum.c
+        ${PROJECT_SOURCE_DIR}/src/download.c
+        ${PROJECT_SOURCE_DIR}/src/ephemeris.c
+        ${PROJECT_SOURCE_DIR}/src/geoid.c
+        ${PROJECT_SOURCE_DIR}/src/gis.c
+        ${PROJECT_SOURCE_DIR}/src/ionex.c
+        ${PROJECT_SOURCE_DIR}/src/lambda.c
+        ${PROJECT_SOURCE_DIR}/src/options.c
+        ${PROJECT_SOURCE_DIR}/src/pntpos.c
+        ${PROJECT_SOURCE_DIR}/src/postpos.c
+        ${PROJECT_SOURCE_DIR}/src/ppp.c
+        ${PROJECT_SOURCE_DIR}/src/ppp_ar.c
+        ${PROJECT_SOURCE_DIR}/src/ppp_corr.c
+        ${PROJECT_SOURCE_DIR}/src/preceph.c
+        ${PROJECT_SOURCE_DIR}/src/qzslex.c
+        ${PROJECT_SOURCE_DIR}/src/rcvraw.c
+        ${PROJECT_SOURCE_DIR}/src/rinex.c
+        ${PROJECT_SOURCE_DIR}/src/rtcm.c
+        ${PROJECT_SOURCE_DIR}/src/rtcm2.c
+        ${PROJECT_SOURCE_DIR}/src/rtcm3.c
+        ${PROJECT_SOURCE_DIR}/src/rtcm3e.c
+        ${PROJECT_SOURCE_DIR}/src/rtkcmn.c
+        ${PROJECT_SOURCE_DIR}/src/rtkpos.c
+        ${PROJECT_SOURCE_DIR}/src/rtksvr.c
+        ${PROJECT_SOURCE_DIR}/src/sbas.c
+        ${PROJECT_SOURCE_DIR}/src/solution.c
+        ${PROJECT_SOURCE_DIR}/src/stream.c
+        ${PROJECT_SOURCE_DIR}/src/tides.c
+        ${PROJECT_SOURCE_DIR}/src/tle.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/binex.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/cmr.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/crescent.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/gw10.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/javad.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/novatel.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/nvs.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/rcvlex.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/rt17.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/septentrio.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/skytraq.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/ss2.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/tersus.c
+        ${PROJECT_SOURCE_DIR}/src/rcv/ublox.c
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/src/rtklib.h
+)
+
+if(WIN32)
+target_link_libraries(${PROJECT_NAME} PUBLIC winmm ws2_32)
+endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
+
+# rtklib complie definitions
+if(RTKLIB_ENABLE_GLO)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DENAGLO)
+endif()
+
+if(RTKLIB_ENABLE_GAL)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DENAGAL)
+endif()
+
+if(RTKLIB_ENABLE_BDS)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DENACMP)
+endif()
+
+if(RTKLIB_ENABLE_QZS)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DENAQZS)
+endif()
+
+if(RTKLIB_ENABLE_IRN)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DENAIRN)
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DNFREQ=${RTKLIB_NFREQ} -DNEXOBS=${RTKLIB_NEXOBS} -DMAXOBS=${RTKLIB_MAXOBS})
 
 # install
 install(TARGETS rtk DESTINATION lib)
-install(FILES ${SRC_DIR}/rtklib.h DESTINATION include)
+install(FILES ${PROJECT_SOURCE_DIR}/src/rtklib.h DESTINATION include)
