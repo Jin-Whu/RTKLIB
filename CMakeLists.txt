@@ -7,16 +7,8 @@ if(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Set build type to Debug or Release (default Release)" FORCE)
 endif()
 
+# option for build shared library
 option(BUILD_SHARED_LIBS "Build shared libs" OFF)
-
-
-if(WIN32)
-add_definitions(-DWIN32)
-endif()
-
-if(BUILD_SHARED_LIBS)
-add_definitions(-DWIN_DLL)
-endif()
 
 # option for GNSS System
 option(RTKLIB_ENABLE_GLO "Define if rtklib should build with support for GLONASS" ON)
@@ -96,8 +88,10 @@ target_sources(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/src/rtklib.h
 )
 
+if(NOT BUILD_SHARED_LIBS)
 if(WIN32)
 target_link_libraries(${PROJECT_NAME} PUBLIC winmm ws2_32)
+endif()
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
@@ -124,6 +118,14 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC -DENAIRN)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DNFREQ=${RTKLIB_NFREQ} -DNEXOBS=${RTKLIB_NEXOBS} -DMAXOBS=${RTKLIB_MAXOBS})
+
+if(WIN32)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DWIN32)
+endif()
+
+if(BUILD_SHARED_LIBS)
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DWIN_DLL)
+endif()
 
 # install
 install(TARGETS rtk DESTINATION lib)
