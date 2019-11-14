@@ -29,6 +29,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
+# windows runtime library configuration
+if(MSVC)
+option(MSVC_STATIC_RUNTIME "link static runtime libraries" ON)
+if(MSVC_STATIC_RUNTIME)
+    foreach(flag_var
+            CMAKE_C_FLAGS_DEBUG
+            CMAKE_C_FLAGS_RELEASE
+    )
+        if(${flag_var} MATCHES "/MD")
+            string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+        endif()
+    endforeach()
+endif()
+endif()
+
 if(BUILD_SHARED_LIBS)
 add_library(${PROJECT_NAME} SHARED "")
 else()
