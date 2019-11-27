@@ -508,18 +508,18 @@ extern "C" {
 #define P2_55       2.775557561562891E-17 /* 2^-55 */
 
 #ifdef WIN32
-#define thread_t    HANDLE
-#define lock_t      CRITICAL_SECTION
-#define initlock(f) InitializeCriticalSection(f)
-#define lock(f)     EnterCriticalSection(f)
-#define unlock(f)   LeaveCriticalSection(f)
+#define rtk_thread_t    HANDLE
+#define rtk_lock_t      CRITICAL_SECTION
+#define rtk_initlock(f) InitializeCriticalSection(f)
+#define rtk_lock(f)     EnterCriticalSection(f)
+#define rtk_unlock(f)   LeaveCriticalSection(f)
 #define FILEPATHSEP '\\'
 #else
-#define thread_t    pthread_t
-#define lock_t      pthread_mutex_t
-#define initlock(f) pthread_mutex_init(f,NULL)
-#define lock(f)     pthread_mutex_lock(f)
-#define unlock(f)   pthread_mutex_unlock(f)
+#define rtk_thread_t    pthread_t
+#define rtk_lock_t      pthread_mutex_t
+#define rtk_initlock(f) pthread_mutex_init(f,NULL)
+#define rtk_lock(f)     pthread_mutex_lock(f)
+#define rtk_unlock(f)   pthread_mutex_unlock(f)
 #define FILEPATHSEP '/'
 #endif
 
@@ -1267,7 +1267,7 @@ typedef struct {        /* stream type */
     unsigned int tick_o; /* output tick */
     unsigned int tact;  /* active tick */
     unsigned int inbt,outbt; /* input/output bytes at tick */
-    lock_t lock;        /* lock flag */
+    rtk_lock_t lock;        /* lock flag */
     void *port;         /* type dependent port control struct */
     char path[MAXSTRPATH]; /* stream path */
     char msg [MAXSTRMSG];  /* stream message */
@@ -1301,8 +1301,8 @@ typedef struct {        /* stream server type */
     unsigned int tick;  /* start tick */
     stream_t stream[16]; /* input/output streams */
     strconv_t *conv[16]; /* stream converter */
-    thread_t thread;    /* server thread */
-    lock_t lock;        /* lock flag */
+    rtk_thread_t thread;    /* server thread */
+    rtk_lock_t lock;        /* lock flag */
 } strsvr_t;
 
 typedef struct {        /* RTK server type */
@@ -1336,7 +1336,7 @@ typedef struct {        /* RTK server type */
     stream_t stream[8]; /* streams {rov,base,corr,sol1,sol2,logr,logb,logc} */
     stream_t *moni;     /* monitor stream */
     unsigned int tick;  /* start tick */
-    thread_t thread;    /* server thread */
+    rtk_thread_t thread;    /* server thread */
     int cputime;        /* CPU time (ms) for a processing cycle */
     int prcout;         /* missing observation data count */
     int nave;           /* number of averaging base pos */
@@ -1344,7 +1344,7 @@ typedef struct {        /* RTK server type */
     char cmds_periodic[3][MAXRCVCMD]; /* periodic commands */
     char cmd_reset[MAXRCVCMD]; /* reset command */
     double bl_reset;    /* baseline length to reset (km) */
-    lock_t lock;        /* lock flag */
+    rtk_lock_t lock;        /* lock flag */
 } rtksvr_t;
 
 typedef struct {        /* gis data point type */
