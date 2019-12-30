@@ -142,6 +142,12 @@ if(BUILD_SHARED_LIBS)
 target_compile_definitions(${PROJECT_NAME} PRIVATE -DWIN_DLL)
 endif()
 
+# build app
+option(BUILD_APP "build app" ON)
+if(BUILD_APP)
+add_subdirectory(app)
+endif()
+
 # install
 install(TARGETS rtk DESTINATION lib)
 install(FILES ${PROJECT_SOURCE_DIR}/src/rtklib.h DESTINATION include)
