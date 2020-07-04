@@ -83,6 +83,7 @@ target_sources(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/src/sbas.c
         ${PROJECT_SOURCE_DIR}/src/solution.c
         ${PROJECT_SOURCE_DIR}/src/stream.c
+        ${PROJECT_SOURCE_DIR}/src/streamsvr.c
         ${PROJECT_SOURCE_DIR}/src/tides.c
         ${PROJECT_SOURCE_DIR}/src/tle.c
         ${PROJECT_SOURCE_DIR}/src/rcv/binex.c
@@ -105,7 +106,9 @@ target_sources(${PROJECT_NAME}
 
 if(NOT BUILD_SHARED_LIBS)
 if(WIN32)
-target_link_libraries(${PROJECT_NAME} PUBLIC winmm ws2_32)
+target_link_libraries(${PROJECT_NAME} INTERFACE winmm ws2_32)
+else()
+target_link_libraries(${PROJECT_NAME} INTERFACE m pthread)
 endif()
 endif()
 
