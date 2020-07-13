@@ -89,7 +89,7 @@ extern int init_rtcm(rtcm_t *rtcm)
         rtcm->sta.pos[i]=rtcm->sta.del[i]=0.0;
     }
     rtcm->sta.hgt=0.0;
-    rtcm->dgps=NULL;
+    rtcm->dgps=rtcm->nav.dgps;
     for (i=0;i<MAXSAT;i++) {
         rtcm->ssr[i]=ssr0;
     }

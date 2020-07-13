@@ -2776,7 +2776,7 @@ extern int savenav(const char *file, const nav_t *nav)
     
     if (!(fp=fopen(file,"w"))) return 0;
     
-    for (i=0;i<MAXSAT;i++) {
+    for (i=0;i<nav->n;i++) {
         if (nav->eph[i].ttr.time==0) continue;
         satno2id(nav->eph[i].sat,id);
         fprintf(fp,"%s,%d,%d,%d,%d,%d,%d,%d,%.14E,%.14E,%.14E,%.14E,%.14E,%.14E,"
@@ -2792,7 +2792,7 @@ extern int savenav(const char *file, const nav_t *nav)
                 nav->eph[i].fit ,nav->eph[i].f0 ,nav->eph[i].f1  ,nav->eph[i].f2  ,
                 nav->eph[i].tgd[0],nav->eph[i].code,nav->eph[i].flag);
     }
-    for (i=0;i<MAXPRNGLO;i++) {
+    for (i=0;i<nav->ng;i++) {
         if (nav->geph[i].tof.time==0) continue;
         satno2id(nav->geph[i].sat,id);
         fprintf(fp,"%s,%d,%d,%d,%d,%d,%d,%d,%.14E,%.14E,%.14E,%.14E,%.14E,%.14E,"
