@@ -1,4 +1,6 @@
 add_subdirectory(rnx2rtkp)
 add_subdirectory(convbin)
 add_subdirectory(pos2kml)
+if(NOT WIN32)
 add_subdirectory(str2str)
+endif()
